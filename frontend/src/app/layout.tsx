@@ -1,11 +1,14 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import '../css/global.css';
 
-const inter = Inter({ subsets: ["latin"] });
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { Header } from './components/Header';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "nebulayoon",
-  description: "nebulayoon personal app",
+  title: 'nebulayoon',
+  description: 'nebulayoon personal app',
 };
 
 export default function RootLayout({
@@ -17,8 +20,8 @@ export default function RootLayout({
     <html lang="en">
       <head></head>
       <body className={inter.className}>
+        <Header />
         {children}
-        <header></header>
         <footer></footer>
       </body>
     </html>
