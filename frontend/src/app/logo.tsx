@@ -21,7 +21,7 @@ const Logo = () => {
         x="50%"
         y="50%"
         fontFamily="Arial, sans-serif"
-        fontSize="40"
+        fontSize="25"
         fill="url(#gradient)"
         dominantBaseline="middle"
         textAnchor="middle"

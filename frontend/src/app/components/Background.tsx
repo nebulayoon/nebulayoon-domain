@@ -6,13 +6,12 @@ const Container = styled.div`
   width: 100%;
   min-width: 1200px;
   overflow: hidden;
-  margin: 0px auto;
   position: relative;
 `;
 
 const VideoTextDiv = styled.div`
   position: absolute;
-  top: 50%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   margin: auto;
@@ -21,7 +20,7 @@ const VideoTextDiv = styled.div`
 
 const VideoTextP = styled.p`
   text-align: center;
-  font-size: 100px;
+  font-size: 80px;
   color: white;
 `;
 
