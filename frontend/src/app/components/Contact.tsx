@@ -6,9 +6,9 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   min-width: 800px;
-  background-color: white;
+  background-color: #a9a9a9;
   justify-content: center;
-  padding: 50vh 0px 50vh 0px;
+  padding: 25vh 0px 25vh 0px;
 `;
 
 const Base = styled.div`

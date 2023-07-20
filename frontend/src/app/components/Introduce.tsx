@@ -8,7 +8,7 @@ const Container = styled.div`
   min-width: 800px;
   background-color: white;
   justify-content: center;
-  padding: 50vh 0px 50vh 0px;
+  padding: 25vh 0px 25vh 0px;
 `;
 
 const HiThereDiv = styled.div`
