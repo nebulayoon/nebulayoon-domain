@@ -36,7 +36,7 @@ const BackgroundVideo = () => {
         <source src="/background.mp4" type="video/mp4" />
       </video>
       <VideoTextDiv>
-        <VideoTextP>Nebulayoon's Web Site</VideoTextP>
+        <VideoTextP>Nebulayoon&apos;s Web Site</VideoTextP>
       </VideoTextDiv>
     </Container>
   );
