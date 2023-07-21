@@ -29,6 +29,7 @@ jobs:
           key: npm-packages-${{ hashFiles('**/package-lock.json') }}
 
       - name: install dependencies
+        working-directory: ./frontend
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm install
 
