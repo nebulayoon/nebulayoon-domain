@@ -2,13 +2,19 @@ import { Module } from '@nestjs/common';
 import { EntityServiceModule } from '@database/main.module';
 import { PostgresEntityModule } from '@database/postgres/postgres.module';
 import { LoggerModule, TimeModule } from './common';
+import { MLoggerModule } from '@common/middleware/logger/logger.module';
+import { UserModule } from './router';
+import { RedisEntityModule } from '@database/redis/redis.module';
 
 @Module({
   imports: [
     PostgresEntityModule,
+    RedisEntityModule,
     EntityServiceModule,
     LoggerModule,
     TimeModule,
+    MLoggerModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],

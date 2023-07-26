@@ -9,9 +9,16 @@ import {
   Delete,
   Put,
   HttpCode,
+  Redirect,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { RegisterDto } from './dto/user.dto';
+import { LoginDto, RegisterDto } from './dto/user.dto';
+import { Request, Response } from 'express';
+import { AuthGuard } from '@common/guard/auth.guard';
+import { User } from '@common/decorator/user.decorator';
+import { IAuthToken } from 'src/auth/type/auth.type';
+import { RefreshGuard } from '@common/guard/refresh.guard';
 
 @Controller('user')
 export class UserController {
@@ -23,15 +30,100 @@ export class UserController {
     try {
       const result = await this.userService.register(registerDto);
 
+      if (result === undefined) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ['생성 실패'],
+        };
+      }
+
       return {
         statusCode: HttpStatus.OK,
         message: ['success'],
-        result: result,
       };
     } catch (e) {
       return {
         statusCode: HttpStatus.BAD_REQUEST,
         message: ['생성 실패'],
+      };
+    }
+  }
+
+  @Post('login')
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      const { accessToken, refreshToken } = await this.userService.login(
+        loginDto,
+      );
+
+      if (accessToken === undefined || refreshToken === undefined) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ['로그인 실패'],
+        };
+      }
+
+      res.cookie('AT', accessToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+
+      res.cookie('RT', refreshToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: ['success'],
+      };
+    } catch (e) {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ['로그인 실패'],
+      };
+    }
+  }
+
+  @Post('token')
+  @UseGuards(RefreshGuard)
+  async newToken(
+    @Req() req: Request,
+    @User() user: IAuthToken,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      const refreshToken = req.cookies['RT'] as string;
+      const newAccessToken = await this.userService.newAuthToken(
+        refreshToken,
+        user,
+      );
+      if (!newAccessToken) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ['새 토큰 발행 실패'],
+        };
+      }
+
+      res.cookie('AT', newAccessToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: ['success'],
+      };
+    } catch (e) {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ['새 토큰 발행 실패'],
       };
     }
   }
