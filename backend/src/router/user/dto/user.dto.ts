@@ -8,3 +8,11 @@ export class RegisterDto extends OmitType(User, [
   'updatedAt',
   'deletedAt',
 ] as const) {}
+
+export class LoginDto extends OmitType(User, [
+  'id',
+  'name',
+  'createdAt',
+  'updatedAt',
+  'deletedAt',
+] as const) {}

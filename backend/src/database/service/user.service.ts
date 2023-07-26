@@ -18,12 +18,12 @@ export class UserEntityService {
     return this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id } });
+  async findOne(id: number, other?: object): Promise<User> {
+    return this.userRepository.findOne({ where: { id, ...other } });
   }
 
-  async findUser(email: string): Promise<User> {
-    return this.userRepository.findOne({ where: { email } });
+  async findUser(user: Partial<User>): Promise<User> {
+    return this.userRepository.findOne({ where: { ...user } });
   }
 
   async update(id: number, updateUser: Partial<User>): Promise<User> {
