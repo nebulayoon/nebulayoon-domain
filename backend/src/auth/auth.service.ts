@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
+import { Injectable, Inject } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { IAuthToken, IRefreshToken } from './type/auth.type';
 
 @Injectable()
 export class AuthService {
-  async signToken(data: object) {
-    return jwt.sign(data, env.TOKEN_SECRET, { expiresIn: 60 * 60 });
+  constructor(@Inject(JwtService) private readonly jwtService: JwtService) {}
+
+  async getAccessToken(atData: IAuthToken) {
+    return this.jwtService.sign(atData);
   }
 
-  async decodeToken(token: string) {
-    return jwt.decode(token);
+  async getRefreshToken(rtData: IRefreshToken) {
+    return this.jwtService.sign(rtData, { expiresIn: '30d' });
   }
 
-  async verifyTokenData() {}
+  async tokenVerify(token: string): Promise<IAuthToken | IRefreshToken> {
+    return this.jwtService.verify(token);
+  }
 }

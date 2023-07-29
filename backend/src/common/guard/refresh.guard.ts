@@ -2,37 +2,28 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
-  forwardRef,
-  UnauthorizedException,
   HttpException,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { Request } from 'express';
 import { IRefreshToken } from 'src/auth/type/auth.type';
-import { JwtService } from '@nestjs/jwt';
 import { RedisRepository } from '@database/redis/redis';
 import { CustomLoggerService } from '@common/log/logger.service';
 
-interface IRefreshTokenPayload extends IRefreshToken {
-  iat: number;
-  exp: number;
-}
-
 export class RefreshGuard implements CanActivate {
   constructor(
-    @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(RedisRepository) private readonly redisRepository: RedisRepository,
     @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
+    @Inject(AuthService) private readonly authService: AuthService,
   ) {}
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const request = ctx.switchToHttp().getRequest() as Request;
     const refreshToken = request.cookies['RT'] as string;
 
     try {
-      const payload = this.jwtService.verify(
+      const payload = (await this.authService.tokenVerify(
         refreshToken,
-      ) as IRefreshTokenPayload;
-      console.log(payload);
+      )) as IRefreshToken;
 
       request['user'] = payload;
 
