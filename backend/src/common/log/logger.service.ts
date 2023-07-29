@@ -6,7 +6,7 @@ import * as winston from 'winston';
 export class CustomLoggerService implements LoggerService {
   private readonly logger: winston.Logger;
 
-  constructor(private readonly timeService: TimeService) {
+  constructor(@Inject(TimeService) private readonly timeService: TimeService) {
     this.logger = winston.createLogger({
       transports: [
         new winston.transports.Console({
@@ -14,6 +14,7 @@ export class CustomLoggerService implements LoggerService {
           format: winston.format.combine(
             winston.format.colorize(),
             winston.format.simple(),
+
             winston.format.printf((obj) => {
               return `${obj.level}: [${this.timeService.getTime(new Date())}] ${
                 obj.message
@@ -25,11 +26,9 @@ export class CustomLoggerService implements LoggerService {
         }),
       ],
     });
-
-    globalThis.logger = this;
   }
 
-  async error(message: string, stack?: string, context?: any) {
+  error(message: string, stack?: string, context?: any) {
     const args = { message, stack, context };
     this.logger.error(args);
   }

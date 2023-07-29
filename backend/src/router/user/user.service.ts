@@ -7,6 +7,7 @@ import { compare, hash } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { v4 } from 'uuid';
 import { RedisRepository } from '@database/redis/redis';
+import { CustomLoggerService } from '@common/log/logger.service';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,7 @@ export class UserService {
     @Inject(EntityService) private readonly entityService: EntityService,
     @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(RedisRepository) private readonly redisRepository: RedisRepository,
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -24,7 +26,7 @@ export class UserService {
           email: registerDto.email,
         });
       } catch (e: any) {
-        logger.error(
+        this.logger.error(
           '[UserService->register] findUser 실패',
           e.stack,
           e.context,
@@ -48,7 +50,11 @@ export class UserService {
         password: hashedPassword,
       });
     } catch (e: any) {
-      logger.error('[UserService->register] create 실패', e.stack, e.context);
+      this.logger.error(
+        '[UserService->register] create 실패',
+        e.stack,
+        e.context,
+      );
       return undefined;
     }
   }
@@ -60,7 +66,7 @@ export class UserService {
           email: loginDto.email,
         });
       } catch (e: any) {
-        logger.error(
+        this.logger.error(
           '[UserService->register] findUser 실패',
           e.stack,
           e.context,

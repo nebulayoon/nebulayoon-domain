@@ -11,6 +11,7 @@ import { Request } from 'express';
 import { IRefreshToken } from 'src/auth/type/auth.type';
 import { JwtService } from '@nestjs/jwt';
 import { RedisRepository } from '@database/redis/redis';
+import { CustomLoggerService } from '@common/log/logger.service';
 
 interface IRefreshTokenPayload extends IRefreshToken {
   iat: number;
@@ -21,6 +22,7 @@ export class RefreshGuard implements CanActivate {
   constructor(
     @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(RedisRepository) private readonly redisRepository: RedisRepository,
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
   ) {}
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const request = ctx.switchToHttp().getRequest() as Request;
@@ -44,7 +46,7 @@ export class RefreshGuard implements CanActivate {
           throw new HttpException('토큰이 만료되었습니다.', 400);
 
         default:
-          logger.error('[Default Token Error]', e.stack, e.context);
+          this.logger.error('[Default Token Error]', e.stack, e.context);
           throw new HttpException('서버 오류', 500);
       }
     }

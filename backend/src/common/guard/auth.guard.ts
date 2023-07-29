@@ -10,6 +10,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { Request } from 'express';
 import { IAuthToken } from 'src/auth/type/auth.type';
 import { JwtService } from '@nestjs/jwt';
+import { CustomLoggerService } from '@common/log/logger.service';
 
 interface ITokenPayload extends IAuthToken {
   iat: number;
@@ -17,7 +18,10 @@ interface ITokenPayload extends IAuthToken {
 }
 
 export class AuthGuard implements CanActivate {
-  constructor(@Inject(JwtService) private jwtService: JwtService) {}
+  constructor(
+    @Inject(JwtService) private readonly jwtService: JwtService,
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
+  ) {}
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const request = ctx.switchToHttp().getRequest() as Request;
     const token = request.cookies['AT'] as string;
@@ -38,7 +42,7 @@ export class AuthGuard implements CanActivate {
           throw new HttpException('토큰이 만료되었습니다.', 400);
 
         default:
-          logger.error('[Default Token Error]', e.stack, e.context);
+          this.logger.error('[Default Token Error]', e.stack, e.context);
           throw new HttpException('서버 오류', 500);
       }
     }
