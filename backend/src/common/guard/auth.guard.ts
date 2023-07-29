@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       this.jwtService.verify(token);
-    } catch (e) {
+    } catch (e: any) {
       switch (e.name) {
         case 'JsonWebTokenError':
           throw new HttpException('유효하지 않은 토큰입니다.', 401);

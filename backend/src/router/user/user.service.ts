@@ -23,7 +23,7 @@ export class UserService {
         return await this.entityService.user.findUser({
           email: registerDto.email,
         });
-      } catch (e) {
+      } catch (e: any) {
         logger.error(
           '[UserService->register] findUser 실패',
           e.stack,
@@ -47,7 +47,7 @@ export class UserService {
         ...registerDto,
         password: hashedPassword,
       });
-    } catch (e) {
+    } catch (e: any) {
       logger.error('[UserService->register] create 실패', e.stack, e.context);
       return undefined;
     }
@@ -59,7 +59,7 @@ export class UserService {
         return await this.entityService.user.findUser({
           email: loginDto.email,
         });
-      } catch (e) {
+      } catch (e: any) {
         logger.error(
           '[UserService->register] findUser 실패',
           e.stack,
