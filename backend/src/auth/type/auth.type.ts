@@ -1,8 +1,13 @@
-export interface IAuthToken {
+export interface tokenBase {
+  iat?: number;
+  exp?: number;
+}
+
+export interface IAuthToken extends tokenBase {
   id: number;
 }
 
-export interface IRefreshToken {
+export interface IRefreshToken extends tokenBase {
   id: number;
   uuid: string;
 }

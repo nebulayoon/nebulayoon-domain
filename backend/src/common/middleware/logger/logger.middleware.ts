@@ -1,9 +1,14 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { CustomLoggerService } from '@common/log/logger.service';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { v4 } from 'uuid';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
+  constructor(
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
+  ) {}
+
   async use(req: Request, res: Response, next: NextFunction) {
     const url = req.originalUrl.split('?')[0];
     const uuid = v4();
@@ -24,7 +29,7 @@ export class LoggerMiddleware implements NestMiddleware {
       ...req.body,
     })} | ${req.headers['user-agent']}`;
 
-    logger.verbose(requestLog);
+    this.logger.verbose(requestLog);
 
     res.on('finish', () => {
       const responseLog = `[RES][${uuid}] | ${ipAddr} | "${req.method} ${
@@ -33,7 +38,7 @@ export class LoggerMiddleware implements NestMiddleware {
         new Date().getTime() - startTime
       ).toLocaleString()}ms`;
 
-      logger.verbose(responseLog);
+      this.logger.verbose(responseLog);
     });
 
     next();

@@ -19,6 +19,7 @@ import { AuthGuard } from '@common/guard/auth.guard';
 import { User } from '@common/decorator/user.decorator';
 import { IAuthToken } from 'src/auth/type/auth.type';
 import { RefreshGuard } from '@common/guard/refresh.guard';
+import { ResponseEntity } from '@common/helpers/responses';
 
 @Controller('user')
 export class UserController {
@@ -27,26 +28,13 @@ export class UserController {
   @Post('register')
   @HttpCode(201)
   async register(@Body() registerDto: RegisterDto) {
-    try {
-      const result = await this.userService.register(registerDto);
+    const result = await this.userService.register(registerDto);
 
-      if (result === undefined) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: ['생성 실패'],
-        };
-      }
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: ['success'],
-      };
-    } catch (e) {
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ['생성 실패'],
-      };
+    if (result === undefined) {
+      return ResponseEntity.FAILED();
     }
+
+    return ResponseEntity.OK();
   }
 
   @Post('login')
@@ -54,40 +42,27 @@ export class UserController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    try {
-      const { accessToken, refreshToken } = await this.userService.login(
-        loginDto,
-      );
+    const { accessToken, refreshToken } = await this.userService.login(
+      loginDto,
+    );
 
-      if (accessToken === undefined || refreshToken === undefined) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: ['로그인 실패'],
-        };
-      }
-
-      res.cookie('AT', accessToken, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
-
-      res.cookie('RT', refreshToken, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: ['success'],
-      };
-    } catch (e) {
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ['로그인 실패'],
-      };
+    if (accessToken === undefined || refreshToken === undefined) {
+      return ResponseEntity.FAILED();
     }
+
+    res.cookie('AT', accessToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    res.cookie('RT', refreshToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    return ResponseEntity.OK();
   }
 
   @Post('token')
@@ -97,34 +72,21 @@ export class UserController {
     @User() user: IAuthToken,
     @Res({ passthrough: true }) res: Response,
   ) {
-    try {
-      const refreshToken = req.cookies['RT'] as string;
-      const newAccessToken = await this.userService.newAuthToken(
-        refreshToken,
-        user,
-      );
-      if (!newAccessToken) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: ['새 토큰 발행 실패'],
-        };
-      }
-
-      res.cookie('AT', newAccessToken, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: ['success'],
-      };
-    } catch (e) {
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ['새 토큰 발행 실패'],
-      };
+    const refreshToken = req.cookies['RT'] as string;
+    const newAccessToken = await this.userService.newAuthToken(
+      refreshToken,
+      user,
+    );
+    if (!newAccessToken) {
+      return ResponseEntity.FAILED();
     }
+
+    res.cookie('AT', newAccessToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    return ResponseEntity.OK();
   }
 }

@@ -2,22 +2,19 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
-  forwardRef,
   UnauthorizedException,
   HttpException,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { Request } from 'express';
 import { IAuthToken } from 'src/auth/type/auth.type';
-import { JwtService } from '@nestjs/jwt';
-
-interface ITokenPayload extends IAuthToken {
-  iat: number;
-  exp: number;
-}
+import { CustomLoggerService } from '@common/log/logger.service';
 
 export class AuthGuard implements CanActivate {
-  constructor(@Inject(JwtService) private jwtService: JwtService) {}
+  constructor(
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
+    @Inject(AuthService) private readonly authService: AuthService,
+  ) {}
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const request = ctx.switchToHttp().getRequest() as Request;
     const token = request.cookies['AT'] as string;
@@ -25,11 +22,13 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    const payload = this.jwtService.decode(token) as ITokenPayload;
-
     try {
-      this.jwtService.verify(token);
-    } catch (e) {
+      const payload = (await this.authService.tokenVerify(token)) as IAuthToken;
+
+      request['user'] = payload;
+
+      return payload.id !== undefined;
+    } catch (e: any) {
       switch (e.name) {
         case 'JsonWebTokenError':
           throw new HttpException('유효하지 않은 토큰입니다.', 401);
@@ -38,13 +37,9 @@ export class AuthGuard implements CanActivate {
           throw new HttpException('토큰이 만료되었습니다.', 400);
 
         default:
-          logger.error('[Default Token Error]', e.stack, e.context);
+          this.logger.error('[Default Token Error]', e.stack, e.context);
           throw new HttpException('서버 오류', 500);
       }
     }
-
-    request['user'] = payload;
-
-    return payload.id !== undefined;
   }
 }
