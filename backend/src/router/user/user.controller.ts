@@ -19,6 +19,7 @@ import { AuthGuard } from '@common/guard/auth.guard';
 import { User } from '@common/decorator/user.decorator';
 import { IAuthToken } from 'src/auth/type/auth.type';
 import { RefreshGuard } from '@common/guard/refresh.guard';
+import { ResponseEntity } from '@common/helpers/responses';
 
 @Controller('user')
 export class UserController {
@@ -30,16 +31,10 @@ export class UserController {
     const result = await this.userService.register(registerDto);
 
     if (result === undefined) {
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ['생성 실패'],
-      };
+      return ResponseEntity.FAILED();
     }
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: ['success'],
-    };
+    return ResponseEntity.OK();
   }
 
   @Post('login')
@@ -52,10 +47,7 @@ export class UserController {
     );
 
     if (accessToken === undefined || refreshToken === undefined) {
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ['로그인 실패'],
-      };
+      return ResponseEntity.FAILED();
     }
 
     res.cookie('AT', accessToken, {
@@ -70,10 +62,7 @@ export class UserController {
       secure: true,
     });
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: ['success'],
-    };
+    return ResponseEntity.OK();
   }
 
   @Post('token')
@@ -89,10 +78,7 @@ export class UserController {
       user,
     );
     if (!newAccessToken) {
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ['로그인 인증 실패'],
-      };
+      return ResponseEntity.FAILED();
     }
 
     res.cookie('AT', newAccessToken, {
@@ -101,9 +87,6 @@ export class UserController {
       secure: true,
     });
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: ['success'],
-    };
+    return ResponseEntity.OK();
   }
 }
