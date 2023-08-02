@@ -1,7 +1,9 @@
 'use client';
 
 import styled from '@emotion/styled';
-import Logo from '../logo';
+import Logo from './logo';
+import Link from 'next/link';
+import Button from '@mui/material/Button';
 
 const Container = styled.header`
   width: 100%;
@@ -31,7 +33,15 @@ export const Header = () => {
       <Base>
         <Logo />
         <div>service1</div>
-        <div>login</div>
+        <Link href={'./login'}>
+          <Button
+            fullWidth
+            variant="contained"
+            style={{ backgroundColor: 'lightgreen' }}
+          >
+            login
+          </Button>
+        </Link>
       </Base>
     </Container>
   );

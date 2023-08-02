@@ -1,13 +1,6 @@
-import Image from 'next/image';
-import BackgroundVideo from './components/Background';
-import Introduce from './components/Introduce';
-import Contact from './components/Contact';
-
-// home page
-/*
-  video
-  증명사진 + 간단한 설명
-*/
+import BackgroundVideo from '../components/Background';
+import Introduce from '../components/Introduce';
+import Contact from '../components/Contact';
 
 export default function Home() {
   return (
