@@ -26,7 +26,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {
     const result = await this.userService.register(registerDto);
 
@@ -34,7 +34,7 @@ export class UserController {
       return ResponseEntity.FAILED();
     }
 
-    return ResponseEntity.OK();
+    return ResponseEntity.CREATED();
   }
 
   @Post('login')
@@ -62,7 +62,10 @@ export class UserController {
       secure: true,
     });
 
-    return ResponseEntity.OK();
+    return ResponseEntity.OK_WITH_DATA(['success'], {
+      accessToken,
+      refreshToken,
+    });
   }
 
   @Post('token')
@@ -87,6 +90,13 @@ export class UserController {
       secure: true,
     });
 
+    return ResponseEntity.OK_WITH_DATA(['success'], { refreshToken });
+  }
+
+  @Get('logOut')
+  @UseGuards(AuthGuard)
+  async logOut(@User() user: IAuthToken) {
+    await this.userService.logOut(user.id);
     return ResponseEntity.OK();
   }
 }

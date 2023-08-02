@@ -12,6 +12,10 @@ export class ResponseEntity<T> {
     this.data = data;
   }
 
+  static CREATED(): ResponseEntity<string> {
+    return new ResponseEntity<string>(HttpStatus.CREATED, ['success'], '');
+  }
+
   static OK(): ResponseEntity<string> {
     return new ResponseEntity<string>(HttpStatus.OK, ['success'], '');
   }

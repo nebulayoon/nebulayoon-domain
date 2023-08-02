@@ -92,8 +92,10 @@ export class UserService {
       uuid: v4(),
     };
 
-    const accessToken = await this.authService.getAccessToken(atData);
-    const refreshToken = await this.authService.getRefreshToken(rtData);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.authService.getAccessToken(atData),
+      this.authService.getRefreshToken(rtData),
+    ]);
 
     try {
       await this.redisRepository.set(user.id.toString(), refreshToken);
@@ -132,5 +134,14 @@ export class UserService {
     const accessToken = await this.authService.getAccessToken(atData);
 
     return accessToken;
+  }
+
+  async validateMultiUser(userId: string): Promise<boolean> {
+    const cacheHit = await this.redisRepository.get(userId);
+    return cacheHit ? true : false;
+  }
+
+  async logOut(userId: number): Promise<void> {
+    await this.redisRepository.del(userId.toString());
   }
 }

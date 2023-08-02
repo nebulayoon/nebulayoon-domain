@@ -13,6 +13,15 @@ export class RedisRepository {
     await this.redisClient.set(key, value);
   }
 
+  async getJson(key: string): Promise<any> {
+    const data = await this.redisClient.get(key);
+    return data ? JSON.parse(data) : null;
+  }
+
+  async setJson(key: string, value: object): Promise<void> {
+    await this.redisClient.set(key, JSON.stringify(value));
+  }
+
   async setExpirySec(
     key: string,
     value: string,

@@ -7,11 +7,11 @@ export class AuthService {
   constructor(@Inject(JwtService) private readonly jwtService: JwtService) {}
 
   async getAccessToken(atData: IAuthToken) {
-    return this.jwtService.sign(atData);
+    return this.jwtService.signAsync(atData);
   }
 
   async getRefreshToken(rtData: IRefreshToken) {
-    return this.jwtService.sign(rtData, { expiresIn: '30d' });
+    return this.jwtService.signAsync(rtData, { expiresIn: '30d' });
   }
 
   async tokenVerify(token: string): Promise<IAuthToken | IRefreshToken> {
