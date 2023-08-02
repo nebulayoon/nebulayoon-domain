@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 import { RedisRepository } from '@database/redis/redis';
 import { CustomLoggerService } from '@common/log/logger.service';
 import { User } from '@database/entity';
+import { Tokens } from './types/tokens.type';
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,7 @@ export class UserService {
     @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
   ) {}
 
-  private async getUserByEmail(email: string): Promise<User> {
+  private async getUserByEmail(email: string): Promise<User | null> {
     const user = await (async () => {
       try {
         return await this.entityService.user.findUser({
@@ -55,7 +56,7 @@ export class UserService {
     }
   }
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto): Promise<User> {
     const hashedPassword = await hash(registerDto.password, 10);
 
     await this.validateDuplicateUser(registerDto.email);
@@ -75,10 +76,11 @@ export class UserService {
     }
   }
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto): Promise<Tokens> {
     const user = await this.getUserByEmail(loginDto.email);
 
     const validatePassword = await compare(loginDto.password, user.password);
+
     if (!validatePassword) {
       return undefined;
     }
@@ -111,7 +113,7 @@ export class UserService {
     return { accessToken, refreshToken };
   }
 
-  async newAuthToken(refreshToken: string, user: IAuthToken) {
+  async newAuthToken(refreshToken: string, user: IAuthToken): Promise<string> {
     const storedRefreshToken = await (async () => {
       try {
         return await this.redisRepository.get(user.id.toString());
