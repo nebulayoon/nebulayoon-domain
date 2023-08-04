@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { Request } from 'express';
-import { IAuthToken } from 'src/auth/type/auth.type';
+import { IAuthToken } from 'src/auth/types/auth.type';
 import { CustomLoggerService } from '@common/log/logger.service';
 
 export class AuthGuard implements CanActivate {

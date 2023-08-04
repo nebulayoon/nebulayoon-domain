@@ -2,13 +2,19 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EntityService } from 'src/database/main.service';
 import { LoginDto, RegisterDto } from './dto/user.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { IAuthToken, IRefreshToken } from 'src/auth/type/auth.type';
+import {
+  IAuthToken,
+  IEmailVerifyToken,
+  IRefreshToken,
+} from 'src/auth/types/auth.type';
 import { compare, hash } from 'bcrypt';
 import { v4 } from 'uuid';
 import { RedisRepository } from '@database/redis/redis';
 import { CustomLoggerService } from '@common/log/logger.service';
 import { User } from '@database/entity';
 import { Tokens } from './types/tokens.type';
+import { MailService } from 'src/mail/mail.service';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 @Injectable()
 export class UserService {
@@ -17,6 +23,7 @@ export class UserService {
     @Inject(AuthService) private readonly authService: AuthService,
     @Inject(RedisRepository) private readonly redisRepository: RedisRepository,
     @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
+    @Inject(MailService) private readonly mailService: MailService,
   ) {}
 
   private async getUserByEmail(email: string): Promise<User | null> {
@@ -62,6 +69,7 @@ export class UserService {
     await this.validateDuplicateUser(registerDto.email);
 
     try {
+      this.sendEmailVerify(registerDto.email);
       return await this.entityService.user.create({
         ...registerDto,
         password: hashedPassword,
@@ -78,11 +86,17 @@ export class UserService {
 
   async login(loginDto: LoginDto): Promise<Tokens> {
     const user = await this.getUserByEmail(loginDto.email);
+    if (!user) {
+      throw new HttpException('잘못된 인증 정보입니다.', 400);
+    }
+
+    if (!user.emailVerify) {
+      throw new HttpException('이메일 인증이 필요합니다.', 401);
+    }
 
     const validatePassword = await compare(loginDto.password, user.password);
-
     if (!validatePassword) {
-      return undefined;
+      throw new HttpException('잘못된 인증 정보입니다.', 400);
     }
 
     const atData: IAuthToken = {
@@ -145,5 +159,42 @@ export class UserService {
 
   async logOut(userId: number): Promise<void> {
     await this.redisRepository.del(userId.toString());
+  }
+
+  async sendEmailVerify(
+    emailAddress: string,
+  ): Promise<SMTPTransport.SentMessageInfo> {
+    const emailVerifyData: IEmailVerifyToken = {
+      email: emailAddress,
+    };
+
+    const token = await this.authService.getEmailVerifyToken(emailVerifyData);
+
+    return await this.mailService.sendMemberJoinVerification(
+      emailAddress,
+      token,
+    );
+  }
+
+  async validateEmail(token: string) {
+    try {
+      const payload = (await this.authService.tokenVerify(
+        token,
+      )) as IEmailVerifyToken;
+
+      return await this.entityService.user.emailVerifyUpdate(payload.email);
+    } catch (e: any) {
+      switch (e.name) {
+        case 'JsonWebTokenError':
+          throw new HttpException('유효하지 않은 토큰입니다.', 401);
+
+        case 'TokenExpiredError':
+          throw new HttpException('토큰이 만료되었습니다.', 400);
+
+        default:
+          this.logger.error('[Default Token Error]', e.stack, e.context);
+          throw new HttpException('서버 오류', 500);
+      }
+    }
   }
 }

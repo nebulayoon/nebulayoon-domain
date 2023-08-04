@@ -11,13 +11,14 @@ import {
   HttpCode,
   Redirect,
   Req,
+  Param,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginDto, RegisterDto } from './dto/user.dto';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@common/guard/auth.guard';
 import { User } from '@common/decorator/user.decorator';
-import { IAuthToken } from 'src/auth/type/auth.type';
+import { IAuthToken } from 'src/auth/types/auth.type';
 import { RefreshGuard } from '@common/guard/refresh.guard';
 import { ResponseEntity } from '@common/helpers/responses';
 
@@ -97,6 +98,12 @@ export class UserController {
   @UseGuards(AuthGuard)
   async logOut(@User() user: IAuthToken) {
     await this.userService.logOut(user.id);
+    return ResponseEntity.OK();
+  }
+
+  @Get('email-verify/:token')
+  async emailVerify(@Param() params: { token: string }) {
+    await this.userService.validateEmail(params.token);
     return ResponseEntity.OK();
   }
 }

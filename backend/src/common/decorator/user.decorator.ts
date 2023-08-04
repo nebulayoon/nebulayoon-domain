@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
-import { IAuthToken } from 'src/auth/type/auth.type';
+import { IAuthToken } from 'src/auth/types/auth.type';
 
 type TRequestWithUser = Request & { user: IAuthToken };
 

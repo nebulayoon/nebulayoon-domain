@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { Request } from 'express';
-import { IRefreshToken } from 'src/auth/type/auth.type';
+import { IRefreshToken } from 'src/auth/types/auth.type';
 import { RedisRepository } from '@database/redis/redis';
 import { CustomLoggerService } from '@common/log/logger.service';
 

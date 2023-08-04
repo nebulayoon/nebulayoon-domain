@@ -5,7 +5,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CustomLoggerService } from '@common/log/logger.service';
 
 async function bootstrap() {
   await initEnv();

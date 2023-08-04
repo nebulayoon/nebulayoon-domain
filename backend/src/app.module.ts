@@ -6,6 +6,7 @@ import { MLoggerModule } from '@common/middleware/logger/logger.module';
 import { UserModule } from './router';
 import { RedisEntityModule } from '@database/redis/redis.module';
 import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
     MLoggerModule,
     AuthModule,
     UserModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],

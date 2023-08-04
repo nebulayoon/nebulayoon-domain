@@ -1,6 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { IAuthToken, IRefreshToken } from './type/auth.type';
+import {
+  IAuthToken,
+  IEmailVerifyToken,
+  IRefreshToken,
+  TTokenCase,
+} from './types/auth.type';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +19,11 @@ export class AuthService {
     return this.jwtService.signAsync(rtData, { expiresIn: '30d' });
   }
 
-  async tokenVerify(token: string): Promise<IAuthToken | IRefreshToken> {
+  async getEmailVerifyToken(evtData: IEmailVerifyToken) {
+    return this.jwtService.signAsync(evtData, { expiresIn: '1h' });
+  }
+
+  async tokenVerify(token: string): Promise<TTokenCase> {
     return this.jwtService.verify(token);
   }
 }

@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 @Entity('users')
 export class User {
@@ -29,12 +29,28 @@ export class User {
   @IsString()
   password: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP()' })
+  @Column({ default: false })
+  @IsBoolean()
+  emailVerify: boolean;
+
+  @Column({ default: true })
+  @IsBoolean()
+  activation: boolean;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP()',
+    nullable: false,
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP()' })
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP()',
+    nullable: false,
+  })
   updatedAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt: Date;
 }

@@ -31,7 +31,28 @@ export class UserEntityService {
     return this.userRepository.findOne({ where: { id } });
   }
 
+  async emailVerifyUpdate(email: string) {
+    await this.userRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({ emailVerify: true })
+      .where('email = :email', { email })
+      .andWhere('deletedAt IS NULL')
+      .execute();
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  /**
+   * user soft delete
+   */
   async delete(id: number): Promise<void> {
+    await this.userRepository.softDelete(id);
+  }
+
+  /**
+   * user hard delete(Do not use as much as possible.)
+   */
+  async realDelete(id: number): Promise<void> {
     await this.userRepository.delete(id);
   }
 }
