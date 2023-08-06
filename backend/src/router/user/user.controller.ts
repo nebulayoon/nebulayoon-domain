@@ -18,7 +18,7 @@ import { LoginDto, RegisterDto } from './dto/user.dto';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@common/guard/auth.guard';
 import { User } from '@common/decorator/user.decorator';
-import { IAuthToken } from 'src/auth/types/auth.type';
+import { IAuthToken, IRefreshToken, IUserInfo } from 'src/auth/types/auth.type';
 import { RefreshGuard } from '@common/guard/refresh.guard';
 import { ResponseEntity } from '@common/helpers/responses';
 
@@ -73,7 +73,7 @@ export class UserController {
   @UseGuards(RefreshGuard)
   async newToken(
     @Req() req: Request,
-    @User() user: IAuthToken,
+    @User() user: IRefreshToken,
     @Res({ passthrough: true }) res: Response,
   ) {
     const refreshToken = req.cookies['RT'] as string;
@@ -94,10 +94,10 @@ export class UserController {
     return ResponseEntity.OK_WITH_DATA(['success'], { refreshToken });
   }
 
-  @Get('logOut')
+  @Get('logout')
   @UseGuards(AuthGuard)
   async logOut(@User() user: IAuthToken) {
-    await this.userService.logOut(user.id);
+    await this.userService.logout(user.id);
     return ResponseEntity.OK();
   }
 
@@ -105,5 +105,16 @@ export class UserController {
   async emailVerify(@Param() params: { token: string }) {
     await this.userService.validateEmail(params.token);
     return ResponseEntity.OK();
+  }
+
+  @Post('login-check')
+  @UseGuards(AuthGuard)
+  async loginCheck(@User() user: IAuthToken) {
+    const userInfo: IUserInfo = {
+      name: user.name,
+      email: user.email,
+    };
+
+    return ResponseEntity.OK_WITH_DATA<IUserInfo>(['success'], userInfo);
   }
 }

@@ -101,10 +101,14 @@ export class UserService {
 
     const atData: IAuthToken = {
       id: user.id,
+      name: user.name,
+      email: user.email,
     };
 
     const rtData: IRefreshToken = {
       id: user.id,
+      name: user.name,
+      email: user.email,
       uuid: v4(),
     };
 
@@ -146,6 +150,8 @@ export class UserService {
 
     const atData: IAuthToken = {
       id: user.id,
+      name: user.name,
+      email: user.email,
     };
     const accessToken = await this.authService.getAccessToken(atData);
 
@@ -157,7 +163,7 @@ export class UserService {
     return cacheHit ? true : false;
   }
 
-  async logOut(userId: number): Promise<void> {
+  async logout(userId: number): Promise<void> {
     await this.redisRepository.del(userId.toString());
   }
 
