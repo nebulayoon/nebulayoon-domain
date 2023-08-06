@@ -4,6 +4,9 @@ import styled from '@emotion/styled';
 import Logo from './logo';
 import Link from 'next/link';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useState } from 'react';
 
 const Container = styled.header`
   width: 100%;
@@ -32,7 +35,6 @@ export const Header = () => {
     <Container>
       <Base>
         <Logo />
-        <div>service1</div>
         <Link href={'./login'}>
           <Button
             fullWidth
@@ -42,6 +44,35 @@ export const Header = () => {
             login
           </Button>
         </Link>
+      </Base>
+    </Container>
+  );
+};
+
+export const LoggedinHeader = () => {
+  const [open, setOpen] = useState(true);
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
+  return (
+    <Container>
+      <Base>
+        <Logo />
+        <div>service1</div>
+
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="open drawer"
+          onClick={toggleDrawer}
+          sx={{
+            marginRight: '36px',
+            ...(open && { display: 'none' }),
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
       </Base>
     </Container>
   );

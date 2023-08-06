@@ -10,6 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useQuery } from 'react-query';
 
 const defaultTheme = createTheme();
 
@@ -49,7 +50,7 @@ export default function RegisterPage() {
       })
     ).json();
 
-    if (result.statusCode === 200) {
+    if (result.statusCode >= 200 && result.statuscode < 400) {
     }
   };
 

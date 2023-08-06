@@ -10,11 +10,18 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { LoginState } from '@/states/state';
+import { useRouter } from 'next/router';
+import { IUserInfo } from '@/states/types/login';
 
 const defaultTheme = createTheme();
 
 export default function LoginPage() {
   const [value, setValue] = useState({ email: '', password: '' });
+  // const [login, setLogin] = useRecoilState(LoginState);
+  const setLogin = useSetRecoilState(LoginState);
+  const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -26,8 +33,7 @@ export default function LoginPage() {
 
   const onClickLogin = async () => {
     if (!value.email || !value.password) {
-      alert('email과 password를 입력해주세요.');
-      return;
+      return alert('email과 password를 입력해주세요.');
     }
 
     const result = await (
@@ -42,6 +48,19 @@ export default function LoginPage() {
     ).json();
 
     if (result.statusCode === 200) {
+      const { data }: { data: IUserInfo } = await (
+        await fetch('https://192.168.0.13:8888/user/login-check', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      ).json();
+
+      if (!data) router.push('/login');
+      setLogin(data);
+      router.push('/');
     }
   };
 
