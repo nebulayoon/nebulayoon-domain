@@ -1,0 +1,30 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx-cloud",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test"],
+        "accessToken": "ZWI1YjFmMmYtYjhlYi00ZDhiLWEyZjUtNmE2NjJjOTM2ZGZkfHJlYWQtd3JpdGU="
+      }
+    }
+  },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "pluginsConfig": {
+    "@nx/js": {
+      "analyzeSourceFiles": true
+    }
+  },
+  "projects": {
+    "api-server": {
+      "tags": ["api-server"]
+    },
+    "parsing-batch": {
+      "tags": ["parsing-batch"]
+    },
+    "types": {
+      "tags": ["module"]
+    }
+  }
+}

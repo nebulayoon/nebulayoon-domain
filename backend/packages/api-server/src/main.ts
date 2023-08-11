@@ -10,8 +10,8 @@ async function bootstrap() {
   await initEnv();
 
   const httpsOptions = {
-    key: fs.readFileSync(path.join(__dirname, '../src/secret/private-key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, '../src/secret/cert.pem')),
+    key: fs.readFileSync(path.join(__dirname, '../secret/private-key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../secret/cert.pem')),
   };
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
