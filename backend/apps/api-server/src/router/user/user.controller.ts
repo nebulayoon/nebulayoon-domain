@@ -16,14 +16,14 @@ import {
 import { UserService } from './user.service';
 import { LoginDto, RegisterDto } from './dto/user.dto';
 import { Request, Response } from 'express';
-import { AuthGuard } from '@libs/common/guard/auth.guard';
-import { User } from '@libs/common/decorator/user.decorator';
+import { AuthGuard } from '../../common/guard/auth.guard';
+import { User } from '../../common/decorator/user.decorator';
 import {
   IAuthToken,
   IRefreshToken,
   IUserInfo,
 } from '../../auth/types/auth.type';
-import { RefreshGuard } from '@libs/common/guard/refresh.guard';
+import { RefreshGuard } from '../../common/guard/refresh.guard';
 import { ResponseEntity } from '@libs/common/helpers/responses';
 
 @Controller('user')

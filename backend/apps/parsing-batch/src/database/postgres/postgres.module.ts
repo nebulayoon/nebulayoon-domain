@@ -14,7 +14,7 @@ import { DBEntities } from '../main.entities';
         password: 'qwer1234',
         database: 'mydomain',
         entities: DBEntities,
-        logging: true,
+        // logging: true,
       }),
     }),
   ],

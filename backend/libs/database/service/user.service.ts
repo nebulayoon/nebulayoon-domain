@@ -1,32 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../entity/user.entitiy';
+import { UserEntity } from '../entity/user.entitiy';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserEntityService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(user: Partial<User>): Promise<User> {
+  async create(user: Partial<UserEntity>): Promise<UserEntity> {
     const result = this.userRepository.create(user);
     return this.userRepository.save(result);
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     return this.userRepository.find();
   }
 
-  async findOne(id: number, other?: object): Promise<User> {
+  async findOne(id: number, other?: object): Promise<UserEntity> {
     return this.userRepository.findOne({ where: { id, ...other } });
   }
 
-  async findUser(user: Partial<User>): Promise<User> {
+  async findUser(user: Partial<UserEntity>): Promise<UserEntity> {
     return this.userRepository.findOne({ where: { ...user } });
   }
 
-  async update(id: number, updateUser: Partial<User>): Promise<User> {
+  async update(
+    id: number,
+    updateUser: Partial<UserEntity>,
+  ): Promise<UserEntity> {
     await this.userRepository.update(id, updateUser);
     return this.userRepository.findOne({ where: { id } });
   }
@@ -34,7 +38,7 @@ export class UserEntityService {
   async emailVerifyUpdate(email: string) {
     await this.userRepository
       .createQueryBuilder()
-      .update(User)
+      .update(UserEntity)
       .set({ emailVerify: true })
       .where('email = :email', { email })
       .andWhere('deletedAt IS NULL')

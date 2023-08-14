@@ -40,7 +40,12 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.17",
-    "winston": "^3.10.0"
+    "winston": "^3.10.0",
+    "@nestjs/schedule": "^3.0.2",
+    "cheerio": "^1.0.0-rc.12",
+    "puppeteer": "^21.0.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -70,6 +75,12 @@
     "tsconfig-paths": "4.2.0",
     "typescript": "^5.0.0",
     "nx": "16.6.0",
+    "@nx/eslint-plugin": "16.6.0",
+    "@nx/js": "16.6.0",
+    "@nx/linter": "16.6.0",
+    "@nx/node": "16.6.0",
+    "@nx/webpack": "16.6.0",
+    "@nx/workspace": "16.6.0",
     "nx-cloud": "latest",
     "@nx/nest": "16.6.0",
     "@nx/jest": "16.6.0"

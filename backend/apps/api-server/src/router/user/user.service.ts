@@ -9,7 +9,7 @@ import {
 } from '../../auth/types/auth.type';
 import { compare, hash } from 'bcrypt';
 import { v4 } from 'uuid';
-import { RedisRepository } from '@libs/database/redis/redis';
+import { RedisRepository } from '../../database/redis/redis';
 import { CustomLoggerService } from '@libs/common/log/logger.service';
 import { UserEntity } from '@libs/database/entity';
 import { Tokens } from './types/tokens.type';
