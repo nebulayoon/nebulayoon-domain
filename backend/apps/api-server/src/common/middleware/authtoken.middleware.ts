@@ -20,14 +20,13 @@ export class AuthTokenMiddleware implements NestMiddleware {
     const accessToken = req.cookies['AT'] as string;
     const refreshToken = req.cookies['RT'] as string;
 
+    if (!accessToken || !refreshToken) return next();
+
     let payload: IAuthToken;
     try {
       payload = (await this.authService.tokenVerify(accessToken)) as IAuthToken;
     } catch (e: any) {
       switch (e.name) {
-        case 'JsonWebTokenError':
-          throw new HttpException('유효하지 않은 토큰입니다.', 401);
-
         case 'TokenExpiredError':
           // refresh token check도 진행
           const newAccessToken = await this.authService.newAccessToken(
@@ -38,9 +37,9 @@ export class AuthTokenMiddleware implements NestMiddleware {
           res.on('finish', () => {
             res.cookie('AT', newAccessToken);
           });
+
         default:
-          this.logger.error('[Default Token Error]', e.stack, e.context);
-          throw new HttpException('서버 오류', 500);
+          next();
       }
     }
 

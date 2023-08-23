@@ -11,7 +11,11 @@ export class BatchService implements OnApplicationBootstrap {
   @Cron('0 */10 * * * *')
   async run() {
     console.log('cron start');
-    this.quasarzoneService.getProducts(5).then(() => console.log('동작완료'));
+    if (process.env?.NODE_ENV !== 'production') {
+      console.log('[DEV] cron tab 동작 확인');
+    } else {
+      this.quasarzoneService.getProducts(5).then(() => console.log('동작완료'));
+    }
   }
 
   onApplicationBootstrap() {
