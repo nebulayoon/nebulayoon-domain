@@ -25,7 +25,7 @@ export class RedisRepository {
   async setExpirySec(
     key: string,
     value: string,
-    expiryInSec: number = 3600,
+    expiryInSec = 3600,
   ): Promise<void> {
     await this.redisClient.set(key, value, 'EX', expiryInSec);
   }

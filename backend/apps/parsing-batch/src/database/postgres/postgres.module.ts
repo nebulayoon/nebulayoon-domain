@@ -8,7 +8,7 @@ import { DBEntities } from '../main.entities';
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres',
-        host: '127.0.0.1',
+        host: 'postgresql',
         port: 5432,
         username: 'root',
         password: 'qwer1234',

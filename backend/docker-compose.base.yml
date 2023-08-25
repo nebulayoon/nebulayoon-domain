@@ -9,4 +9,4 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - mono-node-modules:/app/node_modules
+      - mydomain-mono-node-modules:/app/node_modules

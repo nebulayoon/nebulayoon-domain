@@ -18,6 +18,8 @@ services:
     extends:
       file: docker-compose.base.yml
       service: mydomain-base
+    environment:
+      - NODE_ENV=production
     command: node ./parsing-batch/main.js
     expose:
       - 8889
@@ -50,7 +52,7 @@ services:
       - mydomain_net
 
 volumes:
-  mono-node-modules: null
+  mydomain-mono-node-modules: null
   mydomain_postgres_data:
 
 networks:

@@ -69,7 +69,9 @@ export class UserService {
     await this.validateDuplicateUser(registerDto.email);
 
     try {
-      this.sendEmailVerify(registerDto.email);
+      this.sendEmailVerify(registerDto.email).then(() =>
+        this.logger.verbose(`[메일 전송 완료] server -> ${registerDto.email}`),
+      );
       return await this.entityService.user.create({
         ...registerDto,
         password: hashedPassword,

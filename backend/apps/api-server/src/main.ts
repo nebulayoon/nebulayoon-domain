@@ -20,10 +20,22 @@ async function bootstrap() {
     httpsOptions,
   });
 
-  const origin = ['https://192.168.0.13:3001'];
-
   app.enableCors({
-    origin: origin,
+    origin: (origin, callback) => {
+      const whitelist = [
+        'https://192.168.0.13:3001',
+        'https://nebulayoon.com',
+        'http://front-nextjs',
+        'https://localhost',
+        'https://192.168.0.9',
+        'https://nginx',
+      ];
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,

@@ -9,7 +9,7 @@ import { RedisRepository } from './redis';
     {
       provide: 'REDIS',
       useValue: new Redis({
-        host: process.env.REDIS_HOST,
+        host: 'redis',
         port: 6379,
       }),
     },

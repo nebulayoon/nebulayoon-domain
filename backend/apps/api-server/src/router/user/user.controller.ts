@@ -121,4 +121,9 @@ export class UserController {
 
     return ResponseEntity.OK_WITH_DATA<IUserInfo>(['success'], userInfo);
   }
+
+  @Get('test')
+  async test() {
+    return 'test';
+  }
 }

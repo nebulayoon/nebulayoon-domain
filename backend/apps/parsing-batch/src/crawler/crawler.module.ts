@@ -10,7 +10,8 @@ export class CrawlerModule {
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: executablePath(),
+      executablePath: '/usr/bin/chromium-browser',
+      args: ['--no-sandbox', '--disable-dev-shm-usage'],
     });
 
     const BrowserProvider: Provider = {

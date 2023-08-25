@@ -1,4 +1,4 @@
-import { TypeEnv } from '../common/env';
+import { TypeEnv } from '@common/env/env';
 
 /* eslint-disable no-var */
 declare global {
