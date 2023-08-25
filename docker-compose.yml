@@ -6,13 +6,27 @@ services:
     restart: always
     ports:
       - 80:80
+      - 443:443
+      - 8888:8888
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./secret/cert.pem:/secret/cert.pem
+      - ./secret/private-key.pem:/secret/private-key.pem
+    networks:
+      - backend_mydomain_net
+
   front-nextjs:
     restart: always
     build:
       context: .
       dockerfile: Dockerfile.front
-    command: npm start
+    command: node server.js
     expose:
       - 3000
+      - 3001
+    networks:
+      - backend_mydomain_net
+
+networks:
+  backend_mydomain_net:
+    external: true
