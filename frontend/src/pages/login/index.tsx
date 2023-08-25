@@ -14,6 +14,8 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { LoginState } from '@/states/state';
 import { useRouter } from 'next/router';
 import { IUserInfo } from '@/states/types/login';
+import { ENV } from '@/env/env';
+import axios from 'axios';
 
 const defaultTheme = createTheme();
 
@@ -35,9 +37,9 @@ export default function LoginPage() {
     if (!value.email || !value.password) {
       return alert('email과 password를 입력해주세요.');
     }
-
+  
     const result = await (
-      await fetch('https://192.168.0.13:8888/user/login', {
+      await fetch(`${ENV.API_URL}/user/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -49,7 +51,7 @@ export default function LoginPage() {
 
     if (result.statusCode === 200) {
       const { data }: { data: IUserInfo } = await (
-        await fetch('https://192.168.0.13:8888/user/login-check', {
+        await fetch(`${ENV.API_URL}/user/login-check`, {
           method: 'POST',
           credentials: 'include',
           headers: {

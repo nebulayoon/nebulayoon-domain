@@ -4,6 +4,8 @@ import { LoginState } from '@/states/state';
 import { useEffect, useState } from 'react';
 import { IUserInfo } from '@/states/types/login';
 import { useRouter } from 'next/router';
+import { ENV } from '@/env/env';
+import axios from 'axios';
 
 export default function Base() {
   const login = useRecoilValue(LoginState);
@@ -12,7 +14,7 @@ export default function Base() {
 
   const getUserInfo = async () => {
     const result = await (
-      await fetch('https://192.168.0.13:8888/user/login-check', {
+      await fetch(`${ENV.API_URL}/user/login-check`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -21,12 +23,15 @@ export default function Base() {
       })
     ).json();
 
+    // const result = await axios.post(`${ENV.API_URL}/user/login-check`);
+    // console.log(result.data)
+
     return result;
   };
 
   const getNewAccessToken = async () => {
     const result = await (
-      await fetch('https://192.168.0.13:8888/user/token', {
+      await fetch(`${ENV.API_URL}/user/token`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -49,10 +54,10 @@ export default function Base() {
         await getNewAccessToken();
         const result = await getUserInfo();
 
-        if (result.statusCode !== 200) router.push('/login');
-
-        setLogin(result.data);
-        router.push('/');
+        if (result.statusCode === 200){
+          setLogin(result.data);
+          router.push('/');
+        }
       }
     })();
   }, []);

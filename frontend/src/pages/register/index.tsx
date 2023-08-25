@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useQuery } from 'react-query';
+import { ENV } from '@/env/env';
 
 const defaultTheme = createTheme();
 
@@ -40,7 +41,7 @@ export default function RegisterPage() {
     }
 
     const result = await (
-      await fetch('https://192.168.0.13:8888/user/register', {
+      await fetch(`${ENV.API_URL}/user/register`, {
         method: 'POST',
         credentials: 'include',
         headers: {
