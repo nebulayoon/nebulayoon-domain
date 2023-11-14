@@ -25,24 +25,34 @@ export class AuthTokenMiddleware implements NestMiddleware {
     let payload: IAuthToken;
     try {
       payload = (await this.authService.tokenVerify(accessToken)) as IAuthToken;
+      req['user'] = payload;
+      return next();
     } catch (e: any) {
       switch (e.name) {
         case 'TokenExpiredError':
-          // refresh token check도 진행
+          const decodedAccessToken: IAuthToken = (await this.authService.decode(
+            accessToken,
+          )) as IAuthToken;
+          /* refresh token 검증 필요 */
+
           const newAccessToken = await this.authService.newAccessToken(
             refreshToken,
-            payload,
+            decodedAccessToken,
           );
 
-          res.on('finish', () => {
-            res.cookie('AT', newAccessToken);
-          });
+          if (newAccessToken) {
+            req.cookies['AT'] = newAccessToken;
+            req['user'] = decodedAccessToken;
+          }
 
+          // res.on('finish', () => {
+          //   res.cookie('AT', newAccessToken);
+          // });
+
+          return next();
         default:
-          next();
+          return next();
       }
     }
-
-    next();
   }
 }

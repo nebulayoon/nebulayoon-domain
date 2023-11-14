@@ -7,6 +7,7 @@ import { UserModule } from './router';
 import { RedisEntityModule } from './database/redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { MAuthTokenModule } from './common/middleware/authtoken.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MailModule } from './mail/mail.module';
     LoggerModule,
     TimeModule,
     MLoggerModule,
+    MAuthTokenModule,
     AuthModule,
     UserModule,
     MailModule,

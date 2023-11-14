@@ -76,8 +76,8 @@ export class UserController {
   @Post('token')
   @UseGuards(RefreshGuard)
   async newToken(
-    @Req() req: Request,
     @User() user: IRefreshToken,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const refreshToken = req.cookies['RT'] as string;
@@ -112,12 +112,25 @@ export class UserController {
   }
 
   @Post('login-check')
-  @UseGuards(AuthGuard)
-  async loginCheck(@User() user: IAuthToken) {
+  async loginCheck(
+    @User() user: IAuthToken,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    console.log('user');
+    console.log(user);
+    if (!user) return ResponseEntity.OK_WITH(['NO LOGGEDIN']);
+
     const userInfo: IUserInfo = {
       name: user.name,
       email: user.email,
     };
+
+    res.cookie('AT', req.cookies['AT'], {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
 
     return ResponseEntity.OK_WITH_DATA<IUserInfo>(['success'], userInfo);
   }

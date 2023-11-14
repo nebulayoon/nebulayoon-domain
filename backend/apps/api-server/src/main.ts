@@ -8,6 +8,7 @@ import * as path from 'path';
 
 async function bootstrap() {
   await initEnv();
+  console.log(env.EMAIL_PASS);
 
   const httpsOptions = {
     key: fs.readFileSync(

@@ -7,6 +7,12 @@ import { useRouter } from 'next/router';
 import { ENV } from '@/env/env';
 import axios from 'axios';
 
+interface IServerResult {
+  status: number;
+  message: string[];
+  data: any;
+}
+
 export default function Base() {
   const login = useRecoilValue(LoginState);
   const setLogin = useSetRecoilState(LoginState);
@@ -23,8 +29,7 @@ export default function Base() {
       })
     ).json();
 
-    // const result = await axios.post(`${ENV.API_URL}/user/login-check`);
-    // console.log(result.data)
+    // const result = (await axios.post(`${ENV.API_URL}/user/login-check`)).data;
 
     return result;
   };
@@ -43,23 +48,36 @@ export default function Base() {
     return result;
   };
 
+  // useEffect(() => {
+  //   (async () => {
+  //     const userInfoResult = await getUserInfo();
+
+  //     if (userInfoResult.statusCode === 200) {
+  //       setLogin(userInfoResult.data);
+  //       router.push('/');
+  //     } else {
+  //       console.log('call this branch')
+  //       await getNewAccessToken();
+  //       const result = await getUserInfo();
+
+  //       if (result.statusCode === 200){
+  //         setLogin(result.data);
+  //         router.push('/');
+  //       }
+  //     }
+  //   })();
+  // }, []);
+
   useEffect(() => {
     (async () => {
-      const userInfoResult = await getUserInfo();
-
-      if (userInfoResult.statusCode === 200) {
-        setLogin(userInfoResult.data);
-        router.push('/');
-      } else {
-        await getNewAccessToken();
-        const result = await getUserInfo();
-
-        if (result.statusCode === 200){
-          setLogin(result.data);
-          router.push('/');
-        }
+      const userInfoResult: IServerResult = await getUserInfo();
+      
+    
+      if(userInfoResult.message.includes('success')){
+        setLogin(userInfoResult.data)
+        // console.log('1234')
       }
-    })();
+    })()
   }, []);
 
   return login?.name ? <LoggedinHeader /> : <Header />;

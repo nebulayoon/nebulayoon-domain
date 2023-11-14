@@ -6,13 +6,7 @@ import { MailModule } from '../..//mail/mail.module';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [
-    AuthModule,
-    MailModule.register({
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    }),
-  ],
+  imports: [AuthModule, MailModule.register()],
   providers: [UserService, ConfigService],
   exports: [UserService],
   controllers: [UserController],
