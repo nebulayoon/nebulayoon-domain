@@ -19,7 +19,7 @@ export class MailService {
     emailAddress: string,
     signupVerifyToken: string,
   ) {
-    const url = `https://192.168.0.13:8888/user/email-verify/${signupVerifyToken}`;
+    const url = `https://${process.env.API_SERVER_URL}/user/email-verify/${signupVerifyToken}`;
 
     const mailOptions: EmailOptions = {
       to: emailAddress,

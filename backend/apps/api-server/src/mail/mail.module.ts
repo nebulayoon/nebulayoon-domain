@@ -1,6 +1,7 @@
 import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { MailService } from './mail.service';
 import * as nodemailer from 'nodemailer';
+import * as dotenv from 'dotenv';
 
 export interface EmailConfig {
   user: string;
@@ -14,8 +15,6 @@ export class MailModule {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     };
-
-    console.log(emailConfig);
 
     return {
       module: MailModule,

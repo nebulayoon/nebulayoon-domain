@@ -11,7 +11,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "npx nx run-many --target=serve --all",
     "start:debug": "nx serve --configuration=debug",
     "start:prod": "node dist/main",
     "lint": "nx lint",

@@ -117,8 +117,6 @@ export class UserController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log('user');
-    console.log(user);
     if (!user) return ResponseEntity.OK_WITH(['NO LOGGEDIN']);
 
     const userInfo: IUserInfo = {

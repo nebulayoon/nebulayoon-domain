@@ -8,6 +8,8 @@ services:
     command: node ./api-server/main.js
     expose:
       - 8888
+    env_file:
+      - apps/api-server/.env
     depends_on:
       - postgresql
       - redis
