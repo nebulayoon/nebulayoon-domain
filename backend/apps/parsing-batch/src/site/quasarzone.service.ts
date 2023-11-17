@@ -152,7 +152,8 @@ export class QuasarzoneService {
     const flattenRefines = refines.flatMap((x) => x);
 
     try {
-      await this.entityService.product.upsert(flattenRefines);
+      const result = Array.from(new Set(flattenRefines));
+      await this.entityService.product.upsert(result);
     } catch (e: any) {
       console.log(e);
     }

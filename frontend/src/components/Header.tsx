@@ -59,7 +59,15 @@ export const LoggedinHeader = () => {
     <Container>
       <Base>
         <Logo />
-        <div>service1</div>
+        <Link href={'./qzService'}>
+          <Button
+            fullWidth
+            variant="contained"
+            style={{ backgroundColor: '#B4BDFF' }}
+          >
+            할인헌터
+          </Button>
+        </Link>
 
         <IconButton
           edge="start"
