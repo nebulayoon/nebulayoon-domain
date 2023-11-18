@@ -20,7 +20,27 @@ export class ProductEntityService {
   }
 
   async findAll(): Promise<ProductEntity[]> {
-    return this.productRepository.find();
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.stateNumber', 'state')
+      .leftJoinAndSelect('product.monetaryUnit', 'monetaryUnit')
+      .select([
+        'product.id',
+        'state.stateNumber',
+        'state.state',
+        'product.title',
+        'product.category',
+        'monetaryUnit.monetaryUnitNumber',
+        'monetaryUnit.unitName',
+        'product.price',
+        'product.date',
+        'product.writer',
+        'product.views',
+        'product.link',
+        'product.createdAt',
+        'product.updatedAt',
+      ])
+      .getMany();
   }
 
   async findOne(id: number, other?: object): Promise<ProductEntity> {

@@ -10,23 +10,10 @@ import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import Container from '@mui/material/Container';
 import { useState, useEffect } from 'react';
 import { ENV } from '@/env/env';
-import { setDefaultHighWaterMark } from 'stream';
-
-// Generate Order Data
-function createData(
-  id: number,
-  date: string,
-  name: string,
-  shipTo: string,
-  paymentMethod: string,
-  amount: number,
-) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
 interface IProductData {
   id: number;
-  stateNumber: number;
+  stateNumber: { state: string, stateNumber: number};
+  monetaryUnit: { monetaryUnitNumber: number, unitName: string }
   title: string;
   category: string;
   price: number;
@@ -68,22 +55,25 @@ export default function QzService() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
+            <TableCell>index</TableCell>
+            <TableCell>상태</TableCell>
+            <TableCell>가격</TableCell>
+            <TableCell>단위</TableCell>
+            <TableCell>제목</TableCell>
+            <TableCell>등록일</TableCell>
+            <TableCell>views</TableCell>        
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => (
+          {data.map((row, idx) => (
             <TableRow key={row.id}>
-              <TableCell>{row.stateNumber}</TableCell>
-              <TableCell>{row.title}</TableCell>
-              <TableCell>{row.category}</TableCell>
+              <TableCell>{idx}</TableCell>
+              <TableCell>{row.stateNumber.state}</TableCell>
               <TableCell>{row.price}</TableCell>
-              <TableCell align="right">{`$${row.date}`}</TableCell>
-              <TableCell align="right">{`$${row.views}`}</TableCell>
+              <TableCell>{row.monetaryUnit.unitName}</TableCell>
+              <TableCell>{row.title}</TableCell>
+              <TableCell>{`${row.date}`}</TableCell>
+              <TableCell>{`${row.views}`}</TableCell>
               <Link href={row.link}>
                 <Button variant="contained" startIcon={<ArrowOutwardIcon />}></Button>
               </Link>
