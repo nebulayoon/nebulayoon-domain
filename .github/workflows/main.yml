@@ -27,9 +27,9 @@ jobs:
           PRIVATE_KEY_PEM: ${{ secrets.PRIVATE_KEY_PEM }}
           SECRET_DIR: ${{ secrets.DEPLOY_PATH }}/secret
         run:
-          echo $CERT_REQUEST_CSR > $SECRET_DIR/cert-request.csr &&
-          echo $CERT_PEM > $SECRET_DIR/cert.pem &&
-          echo $PRIVATE_KEY_PEM > $SECRET_DIR/private-key.pem
+          echo $CERT_REQUEST_CSR >> $SECRET_DIR/cert-request.csr &&
+          echo $CERT_PEM >> $SECRET_DIR/cert.pem &&
+          echo $PRIVATE_KEY_PEM >> $SECRET_DIR/private-key.pem
 
       - name: Cache node module
         uses: actions/cache@v3
