@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "build": "npx nx run-many -t build -p api-server parsing-batch",
     "start": "nest start",
     "start:dev": "npx nx run-many --target=serve --all",
     "start:debug": "nx serve --configuration=debug",
