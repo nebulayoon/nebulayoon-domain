@@ -3,6 +3,7 @@ name: domain repo CI/CD
 on:
   push:
     branches: ["develop"]
+  workflow_dispatch:
 
 jobs:
   backend-build:
@@ -37,7 +38,7 @@ jobs:
           PRIVATE_KEY_PEM: ${{ secrets.PRIVATE_KEY_PEM }}
           SECRET_DIR: ${{ secrets.DEPLOY_PATH }}/secret
         run:
-          mkdir ./secret
+          mkdir ./secret &&
           echo $CERT_REQUEST_CSR > ./secret/cert-request.csr &&
           echo $CERT_PEM > ./secret/cert.pem &&
           echo $PRIVATE_KEY_PEM > ./secret/private-key.pem
@@ -78,7 +79,7 @@ jobs:
           PRIVATE_KEY_PEM: ${{ secrets.PRIVATE_KEY_PEM }}
           SECRET_DIR: ${{ secrets.DEPLOY_PATH }}/secret
         run:
-          mkdir ./secret
+          mkdir ./secret &&
           echo $CERT_REQUEST_CSR > ./secret/cert-request.csr &&
           echo $CERT_PEM > ./secret/cert.pem &&
           echo $PRIVATE_KEY_PEM > ./secret/private-key.pem  
