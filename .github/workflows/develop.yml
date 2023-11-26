@@ -1,14 +1,12 @@
 name: domain repo CI/CD
 
 on:
-  # branch 감시
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    branches: ["develop"]
+  workflow_dispatch:
 
 jobs:
-  backend-cicd-job:
+  backend-build:
     name: backend cicd
     runs-on: ubuntu-latest
 
@@ -40,31 +38,52 @@ jobs:
           PRIVATE_KEY_PEM: ${{ secrets.PRIVATE_KEY_PEM }}
           SECRET_DIR: ${{ secrets.DEPLOY_PATH }}/secret
         run:
-          
-          echo $CERT_REQUEST_CSR > $SECRET_DIR/cert-request.csr &&
-          echo $CERT_PEM > $SECRET_DIR/cert.pem &&
-          echo $PRIVATE_KEY_PEM > $SECRET_DIR/private-key.pem
+          mkdir ./secret &&
+          echo $CERT_REQUEST_CSR > ./secret/cert-request.csr &&
+          echo $CERT_PEM > ./secret/cert.pem &&
+          echo $PRIVATE_KEY_PEM > ./secret/private-key.pem
 
       - name: backend-build
         working-directory: ./backend
         run: npm run build
-      
-      - name: deploy
-        uses: appleboy/ssh-action@v0.1.10
+
+  frontend-build:
+    name: frontend cicd
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ secrets.NODE_VERSION }}
+
+      - name: Cache node module
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: node_modules
+          key: npm-packages-${{ hashFiles('**/package-lock.json') }}
+
+      - name: install dependencies
+        working-directory: ./frontend
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Copy Secret & ENV
+        working-directory: ./
         env:
           CERT_REQUEST_CSR: ${{ secrets.CERT_REQUEST_CSR }}
           CERT_PEM: ${{ secrets.CERT_PEM }}
           PRIVATE_KEY_PEM: ${{ secrets.PRIVATE_KEY_PEM }}
           SECRET_DIR: ${{ secrets.DEPLOY_PATH }}/secret
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USERNAME }}
-          key: ${{ secrets.DEPLOY_PASSWORD }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          script: |
-            mkdir $SECRET_DIR
-            echo $CERT_REQUEST_CSR > $SECRET_DIR/cert-request.csr
-            echo $CERT_PEM > $SECRET_DIR/cert.pem
-            echo $PRIVATE_KEY_PEM > $SECRET_DIR/private-key.pem
-            cd ${{ secrets.DEPLOY_PATH }}/backend
-            bash ./deploy.sh
+        run:
+          mkdir ./secret &&
+          echo $CERT_REQUEST_CSR > ./secret/cert-request.csr &&
+          echo $CERT_PEM > ./secret/cert.pem &&
+          echo $PRIVATE_KEY_PEM > ./secret/private-key.pem  
+
+      - name: front-build
+        working-directory: ./frontend
+        run: npm run build
