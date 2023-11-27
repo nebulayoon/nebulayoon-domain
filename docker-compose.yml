@@ -7,7 +7,7 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8888:8888
+      - 12345:12345
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./secret/cert.pem:/secret/cert.pem
