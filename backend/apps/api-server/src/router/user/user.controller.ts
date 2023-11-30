@@ -12,6 +12,7 @@ import {
   Redirect,
   Req,
   Param,
+  Inject,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginDto, RegisterDto } from './dto/user.dto';
@@ -25,15 +26,24 @@ import {
 } from '../../auth/types/auth.type';
 import { RefreshGuard } from '../../common/guard/refresh.guard';
 import { ResponseEntity } from '@libs/common/helpers/responses';
+import { MailService } from '../../mail/mail.service';
+import { CustomLoggerService } from '@libs/common/log/logger.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(UserService) private readonly userService: UserService,
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {
     const result = await this.userService.register(registerDto);
+
+    this.userService.sendEmailVerify(result.email).then(() => {
+      this.logger.log(`이메일 인증 메일 발송 완료.`);
+    });
 
     if (result === undefined) {
       return ResponseEntity.FAILED();

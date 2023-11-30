@@ -15,6 +15,7 @@ import { UserEntity } from '@libs/database/entity';
 import { Tokens } from './types/tokens.type';
 import { MailService } from '../../mail/mail.service';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { Http } from 'winston/lib/winston/transports';
 
 @Injectable()
 export class UserService {
@@ -26,34 +27,8 @@ export class UserService {
     @Inject(MailService) private readonly mailService: MailService,
   ) {}
 
-  private async getUserByEmail(email: string): Promise<UserEntity | null> {
-    const user = await (async () => {
-      try {
-        return await this.entityService.user.findUser({
-          email,
-        });
-      } catch (e: any) {
-        this.logger.error(
-          '[UserService->login] findUser 실패',
-          e.stack,
-          e.context,
-        );
-        return undefined;
-      }
-    })();
-
-    if (user === undefined) {
-      throw new HttpException(
-        '잘못된 인증 정보입니다.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    return user;
-  }
-
   private async validateDuplicateUser(email: string): Promise<void> {
-    const user = await this.getUserByEmail(email);
+    const user = await this.entityService.user.findOneByEmail(email);
 
     if (user) {
       throw new HttpException(
@@ -69,36 +44,35 @@ export class UserService {
     await this.validateDuplicateUser(registerDto.email);
 
     try {
-      this.sendEmailVerify(registerDto.email).then(() =>
-        this.logger.verbose(`[메일 전송 완료] server -> ${registerDto.email}`),
-      );
-      return await this.entityService.user.create({
+      const createdUser = await this.entityService.user.create({
         ...registerDto,
         password: hashedPassword,
       });
+      createdUser.password = '';
+      return createdUser;
     } catch (e: any) {
       this.logger.error(
         '[UserService->register] create 실패',
         e.stack,
         e.context,
       );
-      return undefined;
+      throw new HttpException('서버 오류', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async login(loginDto: LoginDto): Promise<Tokens> {
-    const user = await this.getUserByEmail(loginDto.email);
+    const user = await this.entityService.user.findOneByEmail(loginDto.email);
     if (!user) {
-      throw new HttpException('잘못된 인증 정보입니다.', 400);
-    }
-
-    if (!user.emailVerify) {
-      throw new HttpException('이메일 인증이 필요합니다.', 401);
+      throw new HttpException('잘못된 인증 정보입니다.', HttpStatus.NOT_FOUND);
     }
 
     const validatePassword = await compare(loginDto.password, user.password);
     if (!validatePassword) {
       throw new HttpException('잘못된 인증 정보입니다.', 400);
+    }
+
+    if (!user.emailVerify) {
+      throw new HttpException('이메일 인증이 필요합니다.', 401);
     }
 
     const atData: IAuthToken = {
@@ -120,17 +94,16 @@ export class UserService {
     ]);
 
     try {
-      await this.redisRepository.set(user.id.toString(), refreshToken);
+      await this.redisRepository.set(user.id.toString(), refreshToken); // controller로 이동 고려
+      return { accessToken, refreshToken };
     } catch (e: any) {
       this.logger.error(
         '[UserService->login] Redis Set 실패',
         e.stack,
         e.context,
       );
-      return undefined;
+      throw new HttpException('서버 오류', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    return { accessToken, refreshToken };
   }
 
   async newAuthToken(refreshToken: string, user: IAuthToken): Promise<string> {
@@ -143,11 +116,11 @@ export class UserService {
     })();
 
     if (!storedRefreshToken) {
-      return undefined;
+      throw new HttpException('유저 인증 실패', HttpStatus.FORBIDDEN);
     }
 
     if (refreshToken !== storedRefreshToken) {
-      return undefined;
+      throw new HttpException('유저 인증 실패', HttpStatus.FORBIDDEN);
     }
 
     const atData: IAuthToken = {

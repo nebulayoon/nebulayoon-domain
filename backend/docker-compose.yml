@@ -7,7 +7,7 @@ services:
       service: mydomain-base
     command: node ./api-server/main.js
     expose:
-      - 8888
+      - 12345
     env_file:
       - apps/api-server/.env
     depends_on:
