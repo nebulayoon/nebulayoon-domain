@@ -1,18 +1,14 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 import { UserEntity } from '@libs/database/entity';
 
-export class RegisterDto extends OmitType(UserEntity, [
-  'id',
-  'createdAt',
-  'updatedAt',
-  'deletedAt',
+export class RegisterDto extends PickType(UserEntity, [
+  'name',
+  'email',
+  'password',
 ] as const) {}
 
-export class LoginDto extends OmitType(UserEntity, [
-  'id',
-  'name',
-  'createdAt',
-  'updatedAt',
-  'deletedAt',
+export class LoginDto extends PickType(UserEntity, [
+  'email',
+  'password',
 ] as const) {}

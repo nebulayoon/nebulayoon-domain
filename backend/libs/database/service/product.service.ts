@@ -43,7 +43,7 @@ export class ProductEntityService {
       .getMany();
   }
 
-  async findOne(id: number, other?: object): Promise<ProductEntity> {
+  async findOne(id: number, other?: object): Promise<ProductEntity | null> {
     return this.productRepository.findOne({
       where: { id, ...other },
       relations: ['stateNumber', 'monetaryUnit'],
@@ -52,14 +52,14 @@ export class ProductEntityService {
 
   async findOneComposite(
     data: Pick<ProductEntity, 'title' | 'writer' | 'date'>,
-  ): Promise<ProductEntity> {
+  ): Promise<ProductEntity | null> {
     return this.productRepository.findOne({ where: { ...data } });
   }
 
   async update(
     id: number,
     updateProduct: Partial<ProductEntity>,
-  ): Promise<ProductEntity> {
+  ): Promise<ProductEntity | null> {
     await this.productRepository.update(id, updateProduct);
     return this.productRepository.findOne({ where: { id } });
   }

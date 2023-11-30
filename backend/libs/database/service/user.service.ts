@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entity/user.entitiy';
 import { Repository } from 'typeorm';
@@ -19,18 +19,23 @@ export class UserEntityService {
     return this.userRepository.find();
   }
 
-  async findOne(id: number, other?: object): Promise<UserEntity> {
+  async findOne(id: number, other?: object): Promise<UserEntity | null> {
     return this.userRepository.findOne({ where: { id, ...other } });
   }
 
-  async findUser(user: Partial<UserEntity>): Promise<UserEntity> {
+  async findUser(user: Partial<UserEntity>): Promise<UserEntity | null> {
     return this.userRepository.findOne({ where: { ...user } });
+  }
+
+  async findOneByEmail(email: string): Promise<UserEntity | null> {
+    const user = await this.userRepository.findOneBy({ email });
+    return user;
   }
 
   async update(
     id: number,
     updateUser: Partial<UserEntity>,
-  ): Promise<UserEntity> {
+  ): Promise<UserEntity | null> {
     await this.userRepository.update(id, updateUser);
     return this.userRepository.findOne({ where: { id } });
   }

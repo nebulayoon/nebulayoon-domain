@@ -8,6 +8,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class UserEntity {
@@ -27,6 +28,7 @@ export class UserEntity {
   @Column()
   @IsNotEmpty()
   @IsString()
+  @Exclude()
   password: string;
 
   @Column({ default: false })
@@ -52,5 +54,5 @@ export class UserEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deletedAt: Date;
+  deletedAt?: Date;
 }
