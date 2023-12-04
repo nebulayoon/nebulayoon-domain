@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json"
+}
+
+// lib 개발 전용
