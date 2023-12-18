@@ -6,6 +6,11 @@
 
 ![mydomain 아키텍처2](https://github.com/nebulayoon/nebulayoon-domain/assets/88534125/03c417bd-af49-4a3f-9c65-7ff4dfea640d)
 
+### Goal
+
+![mydomain 목표](https://github.com/nebulayoon/nebulayoon-domain/assets/88534125/4abf8810-79ff-4005-be72-c87291460733)
+
+
 # Environments
 
 ## backend
